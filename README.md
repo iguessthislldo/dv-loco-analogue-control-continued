@@ -1,4 +1,7 @@
 # dv-loco-analogue-control-mod (Continued)
+
+Nexus mods page: https://www.nexusmods.com/derailvalley/mods/490
+
 Derail Valley mod for analogue control in locomotives
 
 # REGENERATE THE CONFIG.JSON AFTER EVERY UPDATE TO PREVENT VERSION MIGRATION ISSUES

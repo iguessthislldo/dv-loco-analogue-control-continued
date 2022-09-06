@@ -97,7 +97,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(DVInstallPath)\Mods\LocoAnalogueControlMod\"
-copy $(TargetPath) "$(DVInstallPath)\Mods\LocoAnalogueControlMod\"
-copy $(SolutionDir)Info.json "$(DVInstallPath)\Mods\LocoAnalogueControlMod\"</PostBuildEvent>
+copy "$(TargetPath)" "$(DVInstallPath)\Mods\LocoAnalogueControlMod\"
+copy "$(SolutionDir)Info.json" "$(DVInstallPath)\Mods\LocoAnalogueControlMod\"
+powershell Compress-Archive -Path '$(TargetPath)', '$(SolutionDir)\Info.json', '$(SolutionDir)\README.md' -DestinationPath '$(TargetDir)\LocoAnalogueControlMod.zip' -Force
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

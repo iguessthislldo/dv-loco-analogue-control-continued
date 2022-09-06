@@ -1,4 +1,4 @@
-# dv-loco-analogue-control-mod
+# dv-loco-analogue-control-mod (Continued)
 Derail Valley mod for analogue control in locomotives
 
 # REGENERATE THE CONFIG.JSON AFTER EVERY UPDATE TO PREVENT VERSION MIGRATION ISSUES
@@ -45,3 +45,12 @@ This can be opened with `WinKey + R` then typing `joy.cpl`. Select the apropriat
 | 5 | Oculus_GearVR_DpadY | Z Rotation| True |
 | 11 | Oculus_GearVR_LIndexTrigger | | False |
 | 12 | Oculus_GearVR_RIndexTrigger | | False |
+
+## Building from Source
+
+You will need Visual Studio and Derail Valley to be installed.
+
+- If not done already, install the latest version of the mod using Unity Mod Manager.
+- Set the `DVInstallPath` environment variable to the location of your installation of Derail Valley. For example this might be `C:\Program Files (x86)\Steam\steamapps\common\Derail Valley\`.
+- Open the `LocoAnalogueControlMod.sln` file.
+- Go to the "Build" menu and click "Build Solution". This should build the mod and install it.

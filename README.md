@@ -1,5 +1,7 @@
 # dv-loco-analogue-control-mod (Continued)
 
+**See https://www.nexusmods.com/derailvalley/mods/687 for the rewrite of the original mod by the original author**
+
 Nexus mods page: https://www.nexusmods.com/derailvalley/mods/490
 
 Derail Valley mod for analogue control in locomotives
@@ -54,6 +56,10 @@ This can be opened with `WinKey + R` then typing `joy.cpl`. Select the apropriat
 You will need Visual Studio and Derail Valley to be installed.
 
 - If not done already, install the latest version of the mod using Unity Mod Manager.
-- Set the `DVInstallPath` environment variable to the location of your installation of Derail Valley. For example this might be `C:\Program Files (x86)\Steam\steamapps\common\Derail Valley\`.
+- Set the `DVInstallPath` environment variable to the location of your installation of Derail Valley.
+  For example this might be `C:\Program Files (x86)\Steam\steamapps\common\Derail Valley\`.
+  This can be done either by:
+  - Running `setx DVInstallPath "C:\Program Files (x86)\Steam\steamapps\common\Derail Valley"` in Run or the Command Prompt.
+  - Using the "Rnvironment Variables" window in "System Properties".
 - Open the `LocoAnalogueControlMod.sln` file.
 - Go to the "Build" menu and click "Build Solution". This should build the mod and install it.

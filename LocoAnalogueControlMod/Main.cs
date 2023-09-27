@@ -5,6 +5,12 @@ using Harmony12;
 using UnityEngine;
 using Newtonsoft.Json;
 
+using DV.Utils;
+using DV.Interaction;
+using DV.InventorySystem;
+using DV.Simulation.Cars;
+using DV.Simulation.Controllers;
+
 namespace LocoAnalogueControlMod
 {
     static class Main
@@ -24,6 +30,7 @@ namespace LocoAnalogueControlMod
         private static Input reverserInput = new Input();
         private static Input trainBrakeInput = new Input();
         private static Input independentBrakeInput = new Input();
+        private static Input hornInput = new Input();
         private static Input fireDoorInput = new Input();
         private static Input InjectorInput = new Input();
         private static Input DraftInput = new Input();
@@ -61,6 +68,11 @@ namespace LocoAnalogueControlMod
                 try { System.IO.File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented)); }
                 catch (Exception ex) { mod.Logger.Log(string.Format("Could not write {0}. {1}", configPath, ex)); }
             }
+
+            if (config.GlobalDebug)
+            {
+                mod.Logger.Log(string.Format("Loaded {0}, GlobalDebug is enabeld", configPath));
+            }
         }
 
         static bool OnToggle(UnityModManager.ModEntry _, bool startMod)
@@ -74,6 +86,7 @@ namespace LocoAnalogueControlMod
 
         static void OnUpdate(UnityModManager.ModEntry mod, float delta)
         {
+            /*
             // Can we set/unset UnityModManager.ModEntry.OnUpdate dynamically instead?
             if (!mod.Enabled) return;
             if (!listenersSetup)
@@ -89,6 +102,7 @@ namespace LocoAnalogueControlMod
                 mod.Logger.Log("Listeners have been set up.");
                 listenersSetup = true;
             }
+            */
 
             // For some reason the axis defaults to 50% on loss of focus. Stop any inputs when that happens
             hasFocusPrev = hasFocus;
@@ -96,6 +110,7 @@ namespace LocoAnalogueControlMod
 
             if (hasFocus)
             {
+                /*
                 // Get remote or local loco
                 LocoControllerBase locoController = null;
                 if (HoldingLocoRoCo != null)
@@ -115,16 +130,20 @@ namespace LocoAnalogueControlMod
                 {
                     locoController = PlayerManager.Car?.GetComponent<LocoControllerBase>();
                 }
+                */
 
                 // Do the actual updating
-                if (locoController != null)
+                BaseControlsOverrider control = PlayerManager.Car?.GetComponent<SimController>()?.controlsOverrider;
+                if (control != null)
                 {
-                    throttleInput.SetItem(config.Throttle, locoController.SetThrottle);
-                    reverserInput.SetItem(config.Reverser, locoController.SetReverser);
-                    trainBrakeInput.SetItem(config.TrainBrake, locoController.SetBrake);
-                    independentBrakeInput.SetItem(config.IndependentBrake, locoController.SetIndependentBrake);
+                    throttleInput.SetItem(config, config.Throttle, control.Throttle);
+                    reverserInput.SetItem(config, config.Reverser, control.Reverser);
+                    trainBrakeInput.SetItem(config, config.TrainBrake, control.Brake);
+                    independentBrakeInput.SetItem(config, config.IndependentBrake, control.IndependentBrake);
+                    hornInput.SetItem(config, config.Horn, control.Horn);
+                    SanderValveInput.SetItem(config, config.SanderValve, control.Sander);
 
-                    if (locoController.GetType().Name.Equals("LocoControllerSteam"))
+                    /*if (locoController.GetType().Name.Equals("LocoControllerSteam"))
                     {
                         // All the steam loco stuff really doesnt like being set
                         // Visuals dont update but the logic is correct ;(
@@ -140,7 +159,7 @@ namespace LocoAnalogueControlMod
                         SanderValveInput.SetItem(config.SanderValve, locoControllerSteam.SetSanders);
                         SteamReleaseInput.SetItem(config.SteamRelease, locoControllerSteam.SetSteamReleaser);
                         WaterDumpInput.SetItem(config.WaterDump, locoControllerSteam.SetWaterDump);
-                    }
+                    }*/
                 }
             }
         }
@@ -160,7 +179,7 @@ namespace LocoAnalogueControlMod
         private float currentInput, previousInput = 0.0f;
         private bool inDeadZone, inDeadZonePrev, inDeadZoneChanged = false;
 
-        public void SetItem(Config.Axis inputAxis, Action<float> setLocoAxis, float minDelta = 0.005f)
+        public void SetItem(Config config, Config.Axis inputAxis, OverridableBaseControl control, float minDelta = 0.005f)
         {
             if (inputAxis != null && !inputAxis.AxisName.Equals(""))
             {
@@ -178,8 +197,9 @@ namespace LocoAnalogueControlMod
                 // minDelta should probably be configurable in case user inputs are more jittery when left in a fixed position
                 if ((Math.Abs(previousInput - currentInput) > minDelta) || inDeadZoneChanged)
                 {
-                    setLocoAxis(currentInput);
-                    if (inputAxis.Debug) Main.mod.Logger.Log(string.Format("Axis: {0}, Value: {1}", inputAxis.AxisName, currentInput));
+                    //SetLocoAxis((dynamic)setLocoAxis, gameValue);
+                    control.Set(currentInput);
+                    if (config.GlobalDebug || inputAxis.Debug) Main.mod.Logger.Log(string.Format("Axis: {0}, Value: {1}", inputAxis.AxisName, control.Value));
                     previousInput = currentInput;
                 }
             }
@@ -226,10 +246,12 @@ namespace LocoAnalogueControlMod
     // Probably a better way to write this
     public class Config
     {
+        public bool GlobalDebug { get; set; } = false;
         public Axis Throttle { get; set; } = new Axis();
         public Axis Reverser { get; set; } = new Axis();
         public Axis TrainBrake { get; set; } = new Axis();
         public Axis IndependentBrake { get; set; } = new Axis();
+        public Axis Horn {  get; set; } = new Axis();
         public Axis FireDoor { get; set; } = new Axis();
         public Axis Injector { get; set; } = new Axis();
         public Axis Draft { get; set; } = new Axis();
